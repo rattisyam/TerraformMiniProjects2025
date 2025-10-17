@@ -3,7 +3,8 @@ resource "azurerm_orchestrated_virtual_machine_scale_set" "appvmss" {
   name                        = "tfappvmss"
   location                    = azurerm_resource_group.rg.location
   resource_group_name         = azurerm_resource_group.rg.name
-  sku_name                    = "Standard_D2s_v4"
+  #sku_name                    = "Standard_D2s_v4"
+  sku_name                    = local.vm_size
   platform_fault_domain_count = 1
   zones                       = ["1"]
   instances                   = 2
@@ -51,5 +52,9 @@ resource "azurerm_orchestrated_virtual_machine_scale_set" "appvmss" {
   lifecycle {
     ignore_changes = [instances]
   }
+  tags = {
+    modified_on = local.common_tags.modified_on
+
+  }
+
 }
-    

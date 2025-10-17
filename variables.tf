@@ -53,4 +53,21 @@ variable "app_lb" {
   default     = "apploadbalancer"
 }
 
+variable "environment" {
+  description = "Deployment Environment Name(Dev,Stage,Prod)"
+  type        = string
+  default     = "dev"
+  
+}
+
+variable "vmss_vm_size" { #it should be based on the environment selection  
+  description = "Size of the VM in the VMSS"
+  type        = map(string)
+  default     = {
+    dev  = "Standard_B1s"
+    prod = "Standard_D2s_v4"
+    stage = "Standard_B2s"
+  }
+  
+}
 

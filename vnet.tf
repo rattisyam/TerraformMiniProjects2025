@@ -10,6 +10,9 @@ resource "azurerm_virtual_network" "vnet" {
   address_space       = [var.vnet_address_space]
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
+  tags = {
+    modified_on = local.common_tags.modified_on
+  }
 }
 
 #APP subnet creation
@@ -26,42 +29,25 @@ resource "azurerm_network_security_group" "nsg" {
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
 
-  security_rule {
-    name                       = "allow-http"
-    priority                   = 100
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "80"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
+dynamic "security_rule" {  #adding dynamic block to add rules from locals.tf
+    for_each = local.nsg_rules
+ 
+    content {
+      name                       = security_rule.value.name
+      priority                   = security_rule.value.priority
+      direction                  = security_rule.value.direction
+      access                     = security_rule.value.access
+      protocol                   = security_rule.value.protocol
+      source_port_range          = security_rule.value.source_port_range
+      destination_port_range     = security_rule.value.destination_port_range
+      source_address_prefix      = security_rule.value.source_address_prefix
+      destination_address_prefix = security_rule.value.destination_address_prefix
+    }
+  
+}
+  tags = {
+    modified_on = local.common_tags.modified_on
   }
-
-  security_rule {
-    name                       = "allow-https"
-    priority                   = 101
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "443"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-  }
-
-  security_rule {
-    name                       = "allow-ssh"
-    priority                   = 102
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "22"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-  }
-
 }
 
 resource "azurerm_subnet_network_security_group_association" "nsg_association" {
@@ -95,6 +81,9 @@ resource "azurerm_lb" "app_lb" {
   frontend_ip_configuration {
     name                 = "AppPublicIPAddress"
     public_ip_address_id = azurerm_public_ip.lb_pub_ip.id
+  }
+  tags = {
+    modified_on = local.common_tags.modified_on
   }
 
 }
