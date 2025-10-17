@@ -15,7 +15,7 @@ locals {
             protocol                   = "Tcp"
             source_port_range          = "*"
             destination_port_range     = "80"
-            source_address_prefix      = "azurermLazurerm_public_ip.lb_pub_ip.ip_address"
+            source_address_prefix      = "*"
             destination_address_prefix = "*"
         },
         {
@@ -26,7 +26,7 @@ locals {
             protocol                   = "Tcp"
             source_port_range          = "*"
             destination_port_range     = "443"
-            source_address_prefix      = "azurermLazurerm_public_ip.lb_pub_ip.ip_address"
+            source_address_prefix      = "*"
             destination_address_prefix = "*"
         },
         {
@@ -37,7 +37,7 @@ locals {
             protocol                   = "Tcp"
             source_port_range          = "*"
             destination_port_range     = "22"
-            source_address_prefix      = "azurermLazurerm_public_ip.lb_pub_ip.ip_address"
+            source_address_prefix      = "*"
             destination_address_prefix = "*"
         }
     ]
